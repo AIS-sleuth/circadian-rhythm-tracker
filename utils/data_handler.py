@@ -256,3 +256,5 @@ class DataHandler:
         except Exception as e:
             logging.error(f"Error backing up data: {str(e)}")
             return None
+    
+

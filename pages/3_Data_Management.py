@@ -46,21 +46,36 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:
     start_date = end_date = date_range
 
+# Helper function for safe slider range
+def get_safe_slider_range(label, series, step=1):
+    """Returns a slider range for the sidebar, handling empty or constant series."""
+    min_val = int(series.min()) if not series.empty else 0
+    max_val = int(series.max()) if not series.empty else 100
+    if min_val == max_val:
+        min_val = max(0, min_val - 5)
+        max_val = max_val + 5
+    return st.sidebar.slider(
+        label,
+        min_value=min_val,
+        max_value=max_val,
+        value=(min_val, max_val),
+        step=step
+    )
+
 # Metric filters
 st.sidebar.markdown("**Filter by Health Metrics:**")
-heart_rate_range = st.sidebar.slider(
-    "Heart Rate (BPM)",
-    min_value=int(data['heart_rate'].min()),
-    max_value=int(data['heart_rate'].max()),
-    value=(int(data['heart_rate'].min()), int(data['heart_rate'].max()))
+heart_rate_range = get_safe_slider_range(
+    label="Heart Rate (BPM)",
+    series=data['heart_rate'],
+    step=1
 )
 
-energy_level_range = st.sidebar.slider(
-    "Energy Level",
-    min_value=int(data['energy_level'].min()),
-    max_value=int(data['energy_level'].max()),
-    value=(int(data['energy_level'].min()), int(data['energy_level'].max()))
+energy_level_range = get_safe_slider_range(
+    label="Energy Level",
+    series=data['energy_level'],
+    step=1
 )
+
 
 # Apply filters
 filtered_data = data.copy()
